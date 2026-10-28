@@ -51,13 +51,22 @@ jobs:
           echo "PROJECT_DIR=$PROJECT_DIR" >> "$GITHUB_ENV"
           echo "Projeto encontrado em: $PROJECT_DIR"
 
+      
+        
       - name: Compilar APK
         shell: bash
         run: |
           set -euo pipefail
+          sudo apt-get update
+          sudo apt-get install -y gradle
           cd "$PROJECT_DIR"
-          chmod +x ./gradlew
-          ./gradlew assembleDebug
+          gradle assembleDebug
+          
+    
+          
+          
+          
+    
 
       - name: Guardar APK
         if: success()
