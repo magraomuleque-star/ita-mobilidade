@@ -35,15 +35,22 @@ jobs:
           if [ -z "$FILE" ]; then
             echo "Nao encontrei settings.gradle.kts no ZIP"
             exit 1
-          fi
-          PROJECT_DIR=$(dirname "$FILE")
-          echo "PROJECT_DIR=$PROJECT_DIR" >> "$GITHUB_ENV"
+          fiPROJECT_DIR=$(dirname "$FILE")
+GRADLEW=$(find "$PROJECT_DIR" -name gradlew -type f -print -quit)
+if [ -z "$GRADLEW" ]; then
+  echo "Arquivo gradlew nao encontrado"
+  find extracted -maxdepth 5 -type f | head -80
+  exit 1
+fi
+PROJECT_DIR=$(dirname "$GRADLEW")
+echo "PROJECT_DIR=$PROJECT_DIR" >> "$GITHUB_ENV"
 
-      - name: Compilar APK
+       - name: Compilar APK
         run: |
           cd "$PROJECT_DIR"
-          chmod +x gradlew
+          chmod +x ./gradlew
           ./gradlew assembleDebug
+          
 
       - name: Disponibilizar APK
         uses: actions/upload-artifact@v4
