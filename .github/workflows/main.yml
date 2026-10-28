@@ -16,12 +16,16 @@ jobs:
       - name: Baixar projeto
         uses: actions/checkout@v4
 
-      - name: Instalar Java
-        uses: actions/setup-java@v4
+      
+        
+              - name: Instalar Java
+        uses: actions/setup-java@v5
         with:
           distribution: temurin
           java-version: "17"
-          cache: gradle
+          
+          
+          
 
       - name: Preparar Android SDK
         uses: android-actions/setup-android@v3
