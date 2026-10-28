@@ -1,0 +1,49 @@
+
+name: Compilar APK ITA Mobilidade
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'ita-mobilidade.zip'
+      - '.github/workflows/main.yml'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Baixar arquivos do repositorio
+        uses: actions/checkout@v4
+
+      - name: Preparar Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Preparar Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Extrair projeto
+        run: |
+          unzip -q ita-mobilidade.zip -d extracted
+          FILE=$(find extracted -name settings.gradle.kts -print -quit)
+          if [ -z "$FILE" ]; then
+            echo "Nao encontrei settings.gradle.kts no ZIP"
+            exit 1
+          fi
+          PROJECT_DIR=$(dirname "$FILE")
+          echo "PROJECT_DIR=$PROJECT_DIR" >> "$GITHUB_ENV"
+
+      - name: Compilar APK
+        run: |
+          cd "$PROJECT_DIR"
+          chmod +x gradlew
+          ./gradlew assembleDebug
+
+      - name: Disponibilizar APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: ITA-Mobilidade-APK
+          path: '**/build/outputs/apk/debug/*.apk'
